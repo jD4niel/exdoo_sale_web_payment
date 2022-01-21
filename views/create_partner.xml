@@ -1,0 +1,91 @@
+<?xml version="1.0"?>
+<odoo>
+    <template id="create_partner">
+        <t t-call="website.layout">
+            <t t-set="title">Nuevo Cliente</t>
+            <div class="oe_structure">
+                <div class="container">
+                    <div id="wrap">
+                        <div class="container">
+                            <br/>
+                            <div class="col-md-12">
+                                <div t-if="partner_id" class="alert alert-success">
+                                El cliente <b><t t-esc="partner_id.name"/></b> fue creado correctamente!
+                                </div>
+
+                                <div t-if="error" class="alert alert-danger">
+                                    <t t-esc="error"/>
+                                </div>
+                            </div>
+                            <br/>
+                            <div class="col-md-12">
+
+                                <form action="/web_sale/partner/save" method="post">
+                                    <div class="form-group">
+                                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                        <input type="hidden" name="token_url" t-att-value="token_url"/>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="col-md-6">
+                                            <label for="name">Nombre:</label>
+                                            <input type="text" class="form-control" name="name" id="name" required="true"/>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="vat">R.F.C:</label>
+                                            <input type="text" class="form-control" name="vat" id="vat" maxlength="14" required="true"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="email">Correo electronico:</label>
+                                        <input type="text" class="form-control" name="email" id="email" equired="true"/>
+                                    </div>
+
+
+                                    <div class="form-group">
+                                        <label for="met_pago_id">Método de pago</label>
+                                        <select required="1" class="form-control" name="met_pago_id" id="met_pago_id">
+                                            <t t-foreach="met_pago_id" t-as="value">
+                                                <option t-att-value="value.id" t-att-data-name="value.name" t-att-selected="1 if 'PUE' in value.display_name else 0"> 
+                                                    <t t-esc="value.display_name"/>
+                                                </option>
+                                            </t>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="uso_cfdi_id">Uso de CFDI</label>
+                                        <select required="1" class="form-control" name="uso_cfdi_id" id="uso_cfdi_id" >
+                                            <t t-foreach="uso_cfdi_id" t-as="value" t-att-selected="1 if 'G03-Gastos en general' in value.display_name else 0">
+                                                <option t-att-value="value.id">
+                                                    <t t-esc="value.display_name"/>
+                                                </option>
+                                            </t>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="forma_pago_id">Forma de pago</label>
+                                        <select required="1" class="form-control" name="forma_pago_id" id="forma_pago_id">
+                                            <t t-foreach="forma_pago_id" t-as="value" t-att-selected="1 if '01' in value.name else 0">
+                                                <option t-att-value="value.id">
+                                                    <t t-esc="value.display_name"/>
+                                                </option>
+                                            </t>
+                                        </select>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-primary">
+                                        Guardar
+                                    </button>
+                                    <br/>
+                                </form>
+                                <br/>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+</odoo>
+

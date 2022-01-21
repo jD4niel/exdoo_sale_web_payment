@@ -1,0 +1,124 @@
+<odoo>
+  <template id="cfdi_from_sale">
+      <t t-call="website.layout">
+          <t t-set="title">CFDI</t>
+          <div class="oe_structure">
+                <div class="container">
+                    <div id="wrap">
+                        <div class="container">
+                            <div class="col-md-12" style="margin-top:100px;">
+                                
+                                <div t-if="partner_error" class="alert alert-danger">
+                                    <span t-esc="partner_error"/>
+                                </div>
+
+                                <div t-if="partner_success" class="alert alert-success">
+                                    <span t-esc="partner_success"/>
+                                </div>
+
+                                <t t-if="some_error">    
+                                    <div class="alert alert-danger">
+                                        Ooops, hubo un problema, contacte al adminsitrador!
+                                    </div>
+                                </t>
+                                <t t-if="cfdi_error">    
+                                    <div class="alert alert-danger">
+                                    <t t-esc="cfdi_error"/> <br/>
+                                    <t t-if="vat and len(vat) == 14">
+                                        Intente eliminando el MX especificado en el R.F.C o asegurese de que sea el correcto. <br/>
+                                    </t>
+                                    Se creó la factura pero no se pudo timbrar. Consulte al administrador para solucionar los problemas de timbrado e intente nuevamente!
+                                    </div>
+                                </t>
+                                <t t-if="error">    
+                                    <div class="alert alert-danger">
+                                    <t t-esc="error"/> <br/>
+                                    </div>
+                                </t>
+
+                                <form t-if="not move_sign and order_id" action="/web_sale/cfdi/submit" method="post">
+                                    <div class="form-group">
+                                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                        <input type="hidden" class="form-control" t-att-value="order_id.id or False" name="order_id" id="order_id" required="true" />        
+                                        <input type="hidden" class="form-control" t-att-value="partner_id.id or False" name="partner_id" id="partner_id"/>        
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="rfc">R.F.C:</label>
+                                        <div class="input-group col-12" style="padding-left:0;padding-right:0;">
+                                            <div class="form-outline col" style="padding-left:0;padding-right:0;">
+                                                <input type="text" class="form-control" t-att-value="partner_id.vat if partner_id else ''" name="rfc" id="rfc" required="true" maxlength="14"/>        
+                                            </div>
+                                            <button type="submit" name="search" class="btn btn-primary" value="buscar" title="Verificar RFC">
+                                                <i class="fa fa-search"></i>
+                                            </button>
+                                            <!-- <button type="button" onclick="window.open(window.location.origin + '/web_sale/partner', '', 'width=500,height=600');" style="margin-left:5px;" name="create_partner" title="Crear cliente" class="btn btn-secondary" value="crear"> -->
+                                            <a t-att-href="create_partner_token">
+                                                <button type="button" style="margin-left:5px;" name="create_partner" title="Crear cliente" class="btn btn-secondary" value="crear">
+                                                    <i class="fa fa-plus"></i>
+                                                </button>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="name">Nombre:</label>
+                                        <input type="text" class="form-control" name="name" t-att-value="partner_id.display_name if partner_id else ''" id="name" />        
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="email">Correo electronico:</label>
+                                        <input type="text" class="form-control" name="email" id="email" t-att-value="partner_id.email if partner_id else ''"/>
+                                    </div>
+
+                                    <!-- datos para timbrar -->
+                                    <t t-if="not not_exdoo_cfdi_module">
+                                        
+                                        <div class="form-group">
+                                            <label for="met_pago_id">Método de pago</label>
+                                            <select required="1" class="form-control" name="met_pago_id" id="met_pago_id">
+                                                <option value="0"> seleccionar </option>
+                                                <t t-foreach="met_pago_id" t-as="value">
+                                                    
+                                                    <option t-att-value="value.id" t-att-data-name="value.name" t-att-selected="1 if default_met_pago_id.id == value.id else 0">
+                                                        <t t-esc="value.display_name"/>
+                                                    </option>
+                                                </t>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="uso_cfdi_id">Uso de CFDI</label>
+                                            <select required="1" class="form-control" name="uso_cfdi_id" id="uso_cfdi_id" >
+                                                <option value="0"> seleccionar </option>
+                                                <t t-foreach="uso_cfdi_id" t-as="value" >
+                                                    <option t-att-value="value.id" t-att-selected="1 if default_uso_cfdi_id.id == value.id else 0">
+                                                        <t t-esc="value.display_name"/>
+                                                    </option>
+                                                </t>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="forma_pago_id">Forma de pago</label>
+                                            <select required="1" class="form-control" name="forma_pago_id" id="forma_pago_id">
+                                                <option value="0"> seleccionar </option>
+                                                <t t-foreach="forma_pago_id" t-as="value" >
+                                                    <option t-att-value="value.id" t-att-selected="1 if default_forma_pago_id.id == value.id else 0">
+                                                        <t t-esc="value.display_name"/>
+                                                    </option>
+                                                </t>
+                                            </select>
+                                        </div>
+                                        
+                                    </t>
+
+                                    <input type="submit" name="create_cfdi" class="btn btn-primary" value="Facturar" style="margin-left:5px"/>
+
+                                </form>
+                            </div>
+
+                            <br/>
+                        </div>
+                    </div>
+                </div>
+          </div>
+      </t>
+  </template>
+
+</odoo>

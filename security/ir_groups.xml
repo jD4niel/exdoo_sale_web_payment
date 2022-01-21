@@ -1,0 +1,14 @@
+<odoo>
+
+    <record model="ir.module.category" id="exdoo_sale_auto_invoice.auto_invoice_category">
+        <field name="name">Auto invoice sale from website</field>
+        <field name="description">Helps you handle auto invoice needs</field>
+        <field name="sequence">1</field>
+    </record>
+
+    <record id="invoice_link" model="res.groups">
+        <field name="name">Generate invoice link from sale</field>
+        <field name="category_id" ref="exdoo_sale_auto_invoice.auto_invoice_category"/>
+    </record>
+        
+</odoo>

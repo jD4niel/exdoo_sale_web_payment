@@ -1,0 +1,68 @@
+<odoo>
+  <template id="cfdi_from_sale_results">
+      <t t-call="website.layout">
+          <t t-set="title">CFDI</t>
+          <div class="oe_structure">
+                <div class="container">
+                    <div id="wrap">
+                        <div class="container">
+                            <div class="col-md-12" style="margin-top:100px;">
+                                <t t-foreach="moves" t-as="move">    
+                                    <t t-if="move_sign and moves">
+                                        <t t-if="not_exdoo_cfdi_module">
+                                            <div class="alert alert-success">
+                                                Factura  <b><t t-esc="move.get('name','unknown')"/></b> creada satisfactoriamente! <br/> <br/>
+                                            </div>
+                                        </t>
+                                    <t t-if="not not_exdoo_cfdi_module">
+                                            <form action="/web/cfdi/send">
+                                                <input type="hidden" name="move" t-att-value="move.get('id',0)"/>
+                                                <div class="alert alert-success">
+                                                    Factura  <b><t t-esc="move.get('name')"/></b> creada satisfactoriamente! <br/> <br/>
+                                                    <t t-if="move.get('xml_files')">     
+                                                        XML : 
+                                                        <t t-foreach="move.get('xml_files')" t-as="xml">
+                                                            <a t-att-href="'/web/content/' + str(xml.sudo().id) + '?download=true'" target="_blank"><t t-esc="xml.sudo().name"/></a> <br/>
+                                                        </t>
+                                                    </t>
+                                                    <t t-if="move.get('pdf_files')">
+                                                        PDF :
+                                                        <t t-foreach="move.get('pdf_files')" t-as="pdf">
+                                                            <a t-att-href="'/web/content/' + str(pdf.sudo().id) + '?download=true'" target="_blank"><t t-esc="pdf.sudo().name"/></a> <br/>
+                                                        </t> <br/>
+                                                    </t>
+                                                </div>
+                                            </form>
+                                        </t> 
+                                    </t>
+                                </t>
+                                
+                                <t t-if="some_error">    
+                                    <div class="alert alert-danger">
+                                        Ooops, hubo un problema, contacte al adminsitrador!
+                                    </div>
+                                </t>
+                                <t t-if="cfdi_error">    
+                                    <div class="alert alert-danger">
+                                    <t t-esc="cfdi_error"/> <br/>
+                                    <t t-if="vat and len(vat) == 14">
+                                        Intente eliminando el MX especificado en el R.F.C o asegurese de que sea el correcto. <br/>
+                                    </t>
+                                    Se creó la factura pero no se pudo timbrar. Consulte al administrador para solucionar los problemas de timbrado e intente nuevamente!
+                                    </div>
+                                </t>
+                                <t t-if="error">    
+                                    <div class="alert alert-danger">
+                                    <t t-esc="error"/> <br/>
+                                    </div>
+                                </t>
+
+                            </div>
+                            <br/>
+                        </div>
+                    </div>
+                </div>
+          </div>
+      </t>
+  </template>
+</odoo>
