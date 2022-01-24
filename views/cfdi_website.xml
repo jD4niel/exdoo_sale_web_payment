@@ -36,6 +36,19 @@
                                     </div>
                                 </t>
 
+                                <t t-if="info">    
+                                    <div class="alert alert-info">
+                                    <t t-esc="info"/> <br/>
+                                    </div>
+                                </t>
+                                <t t-if="warning_msg">    
+                                    <div class="alert alert-warning">
+                                    <t t-esc="warning_msg"/> <br/>
+                                    </div>
+                                </t>
+
+
+
                                 <form t-if="not move_sign and order_id" action="/web_sale/cfdi/submit" method="post">
                                     <div class="form-group">
                                         <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>

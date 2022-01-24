@@ -189,7 +189,7 @@ class SaleAutoInvoice(http.Controller):
             else:
                 values.update(self.get_cfdi_defaults())
             if partner_id and any([partner_id.uso_cfdi_id, partner_id.forma_pago_id, partner_id.met_pago_id]):
-                values.update({'show_cfdi_data':True,'error': _('Order has a partner, but it has not all invoice field completed.')})
+                values.update({'show_cfdi_data':True,'info': _('Order has a partner, but it has not all invoice field completed.')})
         else:
             values.update({'not_exdoo_cfdi_module': True})
 
@@ -237,7 +237,7 @@ class SaleAutoInvoice(http.Controller):
     def partner_new(self, order_id=None, access_token=None, company_id=None,**post):
         values = {'token_url': f'order_id={order_id}&access_token={access_token}&company_id={company_id}'}
         try:
-            values = self.get_cfdi_values()
+            values.update(self.get_cfdi_values())
         except:
             pass     
         values.update({'partner': request.env['res.partner'],})
@@ -287,5 +287,3 @@ class SaleAutoInvoice(http.Controller):
             return request.redirect(url)
 
         return request.render("exdoo_sale_auto_invoice.create_partner", values)
-
-
