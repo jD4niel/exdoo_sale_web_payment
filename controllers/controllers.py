@@ -271,11 +271,13 @@ class SaleAutoInvoice(http.Controller):
                 else:
                     values.update({'error': 'El RFC ingresado ya existe.'})
             except Exception as error:
-                values.update({'error': error})
+                values.update({'error': 'Exception error:' + str(error)})
         else:
             values.update({'error': 'No se ingresaron valores en el formulario, intentelo nuevamente.'})
         base_url = request.website.get_base_url()
         if token_url:
+            if '&partner_external_id=' in token_url:
+                token_url = token_url[:token_url.find('&partner_external_id=')]
             partner_uid = partner_id.id if partner_id else 0
             url = base_url + '/web_sale/invoice?'+token_url+'&partner_external_id=' + str(partner_uid) + '&partner_created=' + str(partner_uid)
             
