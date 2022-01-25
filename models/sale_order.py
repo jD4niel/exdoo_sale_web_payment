@@ -90,24 +90,25 @@ class AccountMove(models.Model):
                 if self.move_type == 'out_refund':
                     if not self.invoice_advanced_rel_ids and not self.invoice_manual_rel_ids:
                         raise UserError (_('Error! \n No puedes timbrar una Nota de credito si no esta relacionada a una factura. Agregue una factura en la pestaña CFDI -> Documentos Relacionados para timbrarla.'))
-                
+
+                    
                 partner_new_vals = {
                     #'cfdi_partner_id': self.partner_id.id,
-                    'zip': web_values.get('zip'),
                     'vat': web_values.get('vat'),
-                    'mail': web_values.get('mail'),
+                    'zip': web_values.get('zip'),
+                    'email': web_values.get('email'),
                     'uso_cfdi_id': web_values.get('uso_cfdi_id'),
-                    'met_pago_id': web_values.get('pay_method_id'),
-                    'forma_pago_id': web_values.get('pay_forma_id'),
+                    'met_pago_id': web_values.get('met_pago_id'),
+                    'forma_pago_id': web_values.get('forma_pago_id'),
                 }
                 # Si el RFC es generico
                 old_partner_values = {
-                    'zip' : move.partner_id.uso_cfdi_id,
+                    'vat' : move.partner_id.vat,
+                    'zip' : move.partner_id.zip,
+                    'email' : move.partner_id.email,
                     'uso_cfdi_id' : move.partner_id.uso_cfdi_id,
                     'forma_pago_id' : move.partner_id.forma_pago_id,
                     'met_pago_id' : move.partner_id.met_pago_id,
-                    'vat' : move.partner_id.vat,
-                    'mail' : move.partner_id.mail,
                 }
                 # move.sudo().write(cfdi_vals)
                 # Actualizamos los datos en el cliente

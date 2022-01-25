@@ -48,7 +48,8 @@ class SaleAutoInvoice(http.Controller):
         # Si le dieron click al boton de buscar entonces regresa el cliente con sus datos
         partner_id = partner_obj.sudo().search([('vat','in',vat_so_search)],limit=1) or partner_obj.browse(int(post.get('partner_id')))
         partner_search_id = partner_obj.sudo().search([('vat','in',vat_so_search)],limit=1)
-        if post.get('search') == 'buscar' or not partner_search_id:
+
+        if post.get('search') == 'buscar':
             values.update({'vat': vat or False, 'no_partner': bool(partner_search_id), 'partner_id': partner_id, 'order_id': order_id})
             try:
                 values.update(self.get_cfdi_defaults())
@@ -58,7 +59,7 @@ class SaleAutoInvoice(http.Controller):
 
             values.update({'create_partner_token': post.get('create_partner_token')})
             if not partner_search_id:
-                values.update({'error': "No se entro RFC: %s en la lista de Clientes."%(vat.upper(),)})
+                values.update({'error': "No se encontro RFC: %s en la lista de Clientes."%(vat.upper(),)})
             return request.render("exdoo_sale_auto_invoice.cfdi_from_sale", values)
             
         # cretae custom moves
@@ -82,8 +83,8 @@ class SaleAutoInvoice(http.Controller):
             values.update(self.get_cfdi_values())
             if partner_id:
                 values.update(self.get_cfdi_defaults(partner_id))
-                if not(partner_id.uso_cfdi_id and partner_id.forma_pago_id and partner_id.met_pago_id):
-                    values.update({'error':'Faltan algunos campos a especificar para poder timbrar la factura!','show_cfdi_data':True})
+                #if not(partner_id.uso_cfdi_id and partner_id.forma_pago_id and partner_id.met_pago_id):
+                #    values.update({'error':'Faltan algunos campos a especificar para poder timbrar la factura!','show_cfdi_data':True})
                 values.update({'partner_id': partner_id,'move_sign': False,})
             else:
                 values.update(self.get_cfdi_defaults())
@@ -115,10 +116,11 @@ class SaleAutoInvoice(http.Controller):
 
                     if not moves.sign:
                         #moves.sudo().write(cfdi_values)
-                        partner_values = cfdi_values.copy().update({
+                        partner_values = cfdi_values.copy()
+                        partner_values.update({
                             'vat': vat,
                             'zip': post.get('zip',False),
-                            'mail': post.get('mail',False),
+                            'email': post.get('email',False),
                         })
                         cfdi_wizard = moves.sudo().create_cfdi_from_web_sale(partner_values)
                         pdf = request.env.ref('experts_account_invoice_cfdi_33.custom_invoice_pdf').sudo()._render_qweb_pdf(moves.ids)[0]
@@ -133,7 +135,7 @@ class SaleAutoInvoice(http.Controller):
                     attachment_ids.sudo().write({'public': True})
 
                 except Exception as error:
-                    values.update({'cfdi_error':error})
+                    values.update({'cfdi_error':  "Controller error on create cfdi (cfdi_submit) :\n" + str(error)})
                     pass
 
 
