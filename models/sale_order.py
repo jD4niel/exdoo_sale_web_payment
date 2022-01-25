@@ -90,14 +90,33 @@ class AccountMove(models.Model):
                 if self.move_type == 'out_refund':
                     if not self.invoice_advanced_rel_ids and not self.invoice_manual_rel_ids:
                         raise UserError (_('Error! \n No puedes timbrar una Nota de credito si no esta relacionada a una factura. Agregue una factura en la pestaña CFDI -> Documentos Relacionados para timbrarla.'))
-                cfdi_vals = {
-                    'cfdi_partner_id': self.partner_id.id,
+                
+                partner_new_vals = {
+                    #'cfdi_partner_id': self.partner_id.id,
+                    'zip': web_values.get('zip'),
+                    'vat': web_values.get('vat'),
+                    'mail': web_values.get('mail'),
                     'uso_cfdi_id': web_values.get('uso_cfdi_id'),
                     'met_pago_id': web_values.get('pay_method_id'),
                     'forma_pago_id': web_values.get('pay_forma_id'),
                 }
+                # Si el RFC es generico
+                old_partner_values = {
+                    'zip' : move.partner_id.uso_cfdi_id,
+                    'uso_cfdi_id' : move.partner_id.uso_cfdi_id,
+                    'forma_pago_id' : move.partner_id.forma_pago_id,
+                    'met_pago_id' : move.partner_id.met_pago_id,
+                    'vat' : move.partner_id.vat,
+                    'mail' : move.partner_id.mail,
+                }
                 # move.sudo().write(cfdi_vals)
+                # Actualizamos los datos en el cliente
+                move.partner_id.sudo().write(partner_new_vals)
+                # Timbramos
                 move.sudo().create_cfdi()
+                # Si es rfc generico entonces regresamos los valores despues de timbrar 
+                if 'XAXX010101000' in old_partner_values.get('vat',''):
+                    move.partner_id.sudo().write(old_partner_values)
                 # vals = {
                 #     'invoice_id':self.id,
                 #     'partner_id':self.partner_id.id,

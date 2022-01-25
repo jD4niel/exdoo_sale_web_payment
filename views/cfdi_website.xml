@@ -47,20 +47,18 @@
                                     </div>
                                 </t>
 
-
-
                                 <form t-if="not move_sign and order_id" action="/web_sale/cfdi/submit" method="post">
                                     <div class="form-group">
                                         <input type="hidden" name="create_partner_token" t-att-value="create_partner_token"/>
                                         <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
-                                        <input type="hidden" class="form-control" t-att-value="order_id.id or False" name="order_id" id="order_id" required="true" />        
-                                        <input type="hidden" class="form-control" t-att-value="partner_id.id or False" name="partner_id" id="partner_id"/>        
+                                        <input type="hidden" class="form-control" t-att-value="order_id.id or False" name="order_id" id="order_id" required="true" />
+                                        <input type="hidden" class="form-control" t-att-value="partner_id.id or False" name="partner_id" id="partner_id"/>
                                     </div>
                                     <div class="form-group">
                                         <label for="rfc">R.F.C:</label>
                                         <div class="input-group col-12" style="padding-left:0;padding-right:0;">
                                             <div class="form-outline col" style="padding-left:0;padding-right:0;">
-                                                <input type="text" class="form-control" t-att-value="partner_id.vat if partner_id else ''" name="rfc" id="rfc" required="true" maxlength="14"/>        
+                                                <input type="text" class="form-control" t-att-value="partner_id.vat if partner_id else ''" name="rfc" id="rfc" required="true" maxlength="14" style="text-transform: uppercase;"/>
                                             </div>
                                             <button type="submit" name="search" class="btn btn-primary" value="buscar" title="Verificar RFC">
                                                 <i class="fa fa-search"></i> Buscar Cliente
@@ -75,11 +73,18 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="name">Nombre:</label>
-                                        <input type="text" class="form-control" name="name" t-att-value="partner_id.display_name if partner_id else ''" id="name" />        
+                                        <input type="text" class="form-control" name="name" t-att-value="partner_id.display_name if partner_id else ''" id="name" />
                                     </div>
-                                    <div class="form-group">
-                                        <label for="email">Correo electronico:</label>
-                                        <input type="text" class="form-control" name="email" id="email" t-att-value="partner_id.email if partner_id else ''"/>
+
+                                    <div class="form-row">
+                                        <div class="col-md-6">
+                                            <label for="email">Correo electronico:</label>
+                                            <input type="text" class="form-control" name="email" id="email" t-att-value="partner_id.email if partner_id else ''"/>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="zip">Código Postal:</label>
+                                            <input type="text" class="form-control" name="zip" id="zip" t-att-value="partner_id.zip if partner_id else ''" required="true"/>
+                                        </div>
                                     </div>
 
                                     <!-- datos para timbrar -->
@@ -121,8 +126,9 @@
                                         </div>
                                         
                                     </t>
-
-                                    <input type="submit" name="create_cfdi" class="btn btn-primary" value="Facturar" style="margin-left:5px"/>
+                                    <div class="form-group">
+                                        <input type="submit" name="create_cfdi" class="btn btn-primary" value="Facturar" style="margin-left:5px; margin-top:10px;"/>
+                                    </div>
 
                                 </form>
                             </div>

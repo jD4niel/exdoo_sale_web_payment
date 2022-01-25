@@ -32,12 +32,18 @@
                                         </div>
                                         <div class="col-md-6">
                                             <label for="vat">R.F.C:</label>
-                                            <input type="text" class="form-control" name="vat" id="vat" maxlength="14" required="true"/>
+                                            <input type="text" class="form-control" name="vat" id="vat" maxlength="14" required="true" style="text-transform: uppercase;"/>
                                         </div>
                                     </div>
-                                    <div class="form-group">
-                                        <label for="email">Correo electronico:</label>
-                                        <input type="text" class="form-control" name="email" id="email" equired="true"/>
+                                    <div class="form-row">
+                                        <div class="col-md-6">
+                                            <label for="email">Correo electronico:</label>
+                                            <input type="text" class="form-control" name="email" id="email" equired="true"/>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="zip">Código Postal:</label>
+                                            <input type="text" class="form-control" name="zip" id="zip" equired="true"/>
+                                        </div>
                                     </div>
 
 

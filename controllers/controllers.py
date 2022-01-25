@@ -50,8 +50,11 @@ class SaleAutoInvoice(http.Controller):
         partner_search_id = partner_obj.sudo().search([('vat','in',vat_so_search)],limit=1)
         if post.get('search') == 'buscar' or not partner_search_id:
             values.update({'vat': vat or False, 'no_partner': bool(partner_search_id), 'partner_id': partner_id, 'order_id': order_id})
-            values.update(self.get_cfdi_defaults())
-            values.update(self.get_cfdi_values())
+            try:
+                values.update(self.get_cfdi_defaults())
+                values.update(self.get_cfdi_values())
+            except Exception as error:
+                pass
 
             values.update({'create_partner_token': post.get('create_partner_token')})
             if not partner_search_id:
@@ -111,8 +114,13 @@ class SaleAutoInvoice(http.Controller):
                     }
 
                     if not moves.sign:
-                        moves.sudo().write(cfdi_values)
-                        cfdi_wizard = moves.sudo().create_cfdi_from_web_sale(cfdi_values)
+                        #moves.sudo().write(cfdi_values)
+                        partner_values = cfdi_values.copy().update({
+                            'vat': vat,
+                            'zip': post.get('zip',False),
+                            'mail': post.get('mail',False),
+                        })
+                        cfdi_wizard = moves.sudo().create_cfdi_from_web_sale(partner_values)
                         pdf = request.env.ref('experts_account_invoice_cfdi_33.custom_invoice_pdf').sudo()._render_qweb_pdf(moves.ids)[0]
                         # moves.sudo().write(cfdi_values)
                         # moves.sudo().create_cfdi()
@@ -171,9 +179,7 @@ class SaleAutoInvoice(http.Controller):
             else:
                 # create invoice from sale
                 pass
-            
-        
-                
+
         values.update({
             'move_sign': bool(moves),
             'token': access_token,
@@ -182,7 +188,7 @@ class SaleAutoInvoice(http.Controller):
             'moves': moves,
             'create_partner_token': f'/web_sale/partner?order_id={sale.id}&access_token={access_token}&company_id={company_id}'
         })
-        
+
         # Se obtiene los modelos uso_cfdi, metodo de pago y forma de pago
         if self.check_exdoo_invoice_module():
             values.update(self.get_cfdi_values())
@@ -241,7 +247,7 @@ class SaleAutoInvoice(http.Controller):
         try:
             values.update(self.get_cfdi_values())
         except:
-            pass     
+            pass
         values.update({'partner': request.env['res.partner'],})
 
         if post.get('partner_correct'):
@@ -266,9 +272,8 @@ class SaleAutoInvoice(http.Controller):
                 if not partner_id:
                     country_id = request.env['res.partner'].sudo().env.ref('base.mx').id
                     post.update({'country_id': country_id})
+                    post.update({'vat': vat.upper()})
                     partner_id = request.env['res.partner'].sudo().create(post)
-                    
-                        
                     values.update({'partner_id': partner_id, 'partner_correct': True})
                 else:
                     values.update({'error': 'El RFC ingresado ya existe.'})
