@@ -52,6 +52,8 @@ class SaleAutoInvoice(http.Controller):
             values.update({'vat': vat or False, 'no_partner': bool(partner_search_id), 'partner_id': partner_id, 'order_id': order_id})
             values.update(self.get_cfdi_defaults())
             values.update(self.get_cfdi_values())
+
+            values.update({'create_partner_token': post.get('create_partner_token')})
             if not partner_search_id:
                 values.update({'error': "No se entro RFC: %s en la lista de Clientes."%(vat.upper(),)})
             return request.render("exdoo_sale_auto_invoice.cfdi_from_sale", values)

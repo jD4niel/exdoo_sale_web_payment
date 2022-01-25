@@ -51,6 +51,7 @@
 
                                 <form t-if="not move_sign and order_id" action="/web_sale/cfdi/submit" method="post">
                                     <div class="form-group">
+                                        <input type="hidden" name="create_partner_token" t-att-value="create_partner_token"/>
                                         <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                                         <input type="hidden" class="form-control" t-att-value="order_id.id or False" name="order_id" id="order_id" required="true" />        
                                         <input type="hidden" class="form-control" t-att-value="partner_id.id or False" name="partner_id" id="partner_id"/>        
@@ -62,12 +63,12 @@
                                                 <input type="text" class="form-control" t-att-value="partner_id.vat if partner_id else ''" name="rfc" id="rfc" required="true" maxlength="14"/>        
                                             </div>
                                             <button type="submit" name="search" class="btn btn-primary" value="buscar" title="Verificar RFC">
-                                                <i class="fa fa-search"></i>
+                                                <i class="fa fa-search"></i> Buscar Cliente
                                             </button>
                                             <!-- <button type="button" onclick="window.open(window.location.origin + '/web_sale/partner', '', 'width=500,height=600');" style="margin-left:5px;" name="create_partner" title="Crear cliente" class="btn btn-secondary" value="crear"> -->
                                             <a t-att-href="create_partner_token">
                                                 <button type="button" style="margin-left:5px;" name="create_partner" title="Crear cliente" class="btn btn-secondary" value="crear">
-                                                    <i class="fa fa-plus"></i>
+                                                    <i class="fa fa-plus"></i> Crear Cliente
                                                 </button>
                                             </a>
                                         </div>
