@@ -58,7 +58,7 @@
                                         <label for="rfc">R.F.C:</label>
                                         <div class="input-group col-12" style="padding-left:0;padding-right:0;">
                                             <div class="form-outline col" style="padding-left:0;padding-right:0;">
-                                                <input type="text" class="form-control" t-att-value="partner_id.vat if partner_id else ''" name="rfc" id="rfc" required="true" maxlength="14" style="text-transform: uppercase;"/>
+                                                <input type="text" class="form-control" t-att-value="partner_id.vat if partner_id else ''" name="rfc" id="rfc" required="true" maxlength="15" style="text-transform: uppercase;"/>
                                             </div>
                                             <button type="submit" name="search" class="btn btn-primary" value="buscar" title="Verificar RFC">
                                                 <i class="fa fa-search"></i> Buscar Cliente

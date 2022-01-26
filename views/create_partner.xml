@@ -32,7 +32,7 @@
                                         </div>
                                         <div class="col-md-6">
                                             <label for="vat">R.F.C:</label>
-                                            <input type="text" class="form-control" name="vat" id="vat" maxlength="14" required="true" style="text-transform: uppercase;"/>
+                                            <input type="text" class="form-control" name="vat" id="vat" maxlength="15" required="true" style="text-transform: uppercase;"/>
                                         </div>
                                     </div>
                                     <div class="form-row">

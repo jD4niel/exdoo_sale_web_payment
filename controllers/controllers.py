@@ -121,6 +121,7 @@ class SaleAutoInvoice(http.Controller):
                             'vat': vat,
                             'zip': post.get('zip',False),
                             'email': post.get('email',False),
+                            'name': post.get('name',False),
                         })
                         cfdi_wizard = moves.sudo().create_cfdi_from_web_sale(partner_values)
                         pdf = request.env.ref('experts_account_invoice_cfdi_33.custom_invoice_pdf').sudo()._render_qweb_pdf(moves.ids)[0]
