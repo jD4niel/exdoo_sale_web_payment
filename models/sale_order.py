@@ -91,7 +91,7 @@ class AccountMove(models.Model):
                     if not self.invoice_advanced_rel_ids and not self.invoice_manual_rel_ids:
                         raise UserError (_('Error! \n No puedes timbrar una Nota de credito si no esta relacionada a una factura. Agregue una factura en la pestaña CFDI -> Documentos Relacionados para timbrarla.'))
 
-                    
+                  
                 partner_new_vals = {
                     #'cfdi_partner_id': self.partner_id.id,
                     'vat': web_values.get('vat'),
@@ -114,28 +114,42 @@ class AccountMove(models.Model):
                 # Actualizamos los datos en el cliente
                 move.partner_id.sudo().write(partner_new_vals)
                 # Timbramos
-                move.sudo().create_cfdi()
+                #move.sudo().create_cfdi()
+                vals = {
+                    'partner_id':move.partner_id.id,
+                    'invoice_id': move.id,
+                }
+                wizard_id = move.env['partner.invoice.wizard'].sudo().new(vals)
+                wizard_id.onchange_partner_id()
+                values = {
+                    'partner_id': wizard_id.partner_id.id or False,
+                    'invoice_id': wizard_id.invoice_id.id or False,
+                    'vat': wizard_id.vat,
+                    'street': wizard_id.street,
+                    'street2': wizard_id.street2,
+                    'l10n_mx_street3': wizard_id.l10n_mx_street3,
+                    'l10n_mx_street4': wizard_id.l10n_mx_street4,
+                    'l10n_mx_city2': wizard_id.l10n_mx_city2,
+                    'zip': wizard_id.zip,
+                    'city': wizard_id.city,
+                    'state_id': wizard_id.state_id.id or False,
+                    'country_id': wizard_id.country_id.id or False,
+                    'email': wizard_id.email,
+                    'pay_forma_id': wizard_id.pay_forma_id.id or False,
+                    'pay_method_id': wizard_id.pay_method_id.id or False,
+                    'sign': wizard_id.sign,
+                    'uso_cfdi_id': wizard_id.uso_cfdi_id.id or False,
+                    'ppd_method_payment': wizard_id.ppd_method_payment,
+                    'reg_fis_id': wizard_id.reg_fis_id.id or False,
+                    'show_reg_fis': wizard_id.show_reg_fis,
+                }
+
+                wizard_id.create(values)
+                wizard_id.sudo().create_cfdi()
                 # Si es rfc generico entonces regresamos los valores despues de timbrar 
                 if 'XAXX010101000' in old_partner_values.get('vat',''):
                     move.partner_id.sudo().write(old_partner_values)
-                # vals = {
-                #     'invoice_id':self.id,
-                #     'partner_id':self.partner_id.id,
-                #     'zip':self.partner_id.zip,
-                #     'street2': self.partner_id.street2 or '',
-                #     'street': self.partner_id.street or '',
-                #     'l10n_mx_street3': self.partner_id.l10n_mx_street3,
-                #     'l10n_mx_street4': self.partner_id.l10n_mx_street4,
-                #     'l10n_mx_city2': self.partner_id.l10n_mx_city2,
-                #     'city': self.partner_id.city,
-                #     'state_id': self.partner_id.state_id.id,
-                #     'country_id': self.partner_id.country_id.id,
-                #     'email': self.partner_id.email,
-                    
-                # }
                 # vals.update(web_values)
-                # wizard_id = self.env['partner.invoice.wizard'].sudo().create(vals)
-                # wizard_id.sudo().create_cfdi()
 
                 return self
     
