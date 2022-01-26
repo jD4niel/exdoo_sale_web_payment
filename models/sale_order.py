@@ -117,42 +117,51 @@ class AccountMove(models.Model):
                 move.partner_id.sudo().write(partner_new_vals)
                 # Timbramos
                 #move.sudo().create_cfdi()
-                vals = {
-                    'partner_id':move.partner_id.id,
-                    'invoice_id': move.id,
-                }
-                wizard_id = move.env['partner.invoice.wizard'].sudo().new(vals)
-                wizard_id.onchange_partner_id()
-                values = {
-                    'partner_id': wizard_id.partner_id.id or False,
-                    'invoice_id': wizard_id.invoice_id.id or False,
-                    'vat': wizard_id.vat,
-                    'street': wizard_id.street,
-                    'street2': wizard_id.street2,
-                    'l10n_mx_street3': wizard_id.l10n_mx_street3,
-                    'l10n_mx_street4': wizard_id.l10n_mx_street4,
-                    'l10n_mx_city2': wizard_id.l10n_mx_city2,
-                    'zip': wizard_id.zip,
-                    'city': wizard_id.city,
-                    'state_id': wizard_id.state_id.id or False,
-                    'country_id': wizard_id.country_id.id or False,
-                    'email': wizard_id.email,
-                    'pay_forma_id': wizard_id.pay_forma_id.id or False,
-                    'pay_method_id': wizard_id.pay_method_id.id or False,
-                    'sign': wizard_id.sign,
-                    'uso_cfdi_id': wizard_id.uso_cfdi_id.id or False,
-                    'ppd_method_payment': wizard_id.ppd_method_payment,
-                    'reg_fis_id': wizard_id.reg_fis_id.id or False,
-                    'show_reg_fis': wizard_id.show_reg_fis,
-                }
 
-                wizard_id.create(values)
-                wizard_id.sudo().create_cfdi()
-                # Si es rfc generico entonces regresamos los valores despues de timbrar 
-                if 'XAXX010101000' in old_partner_values.get('vat',''):
-                    move.partner_id.sudo().write(old_partner_values)
+                def restore_def_vals():
+                    # creamos la factura   
+                    self.env.ref('experts_account_invoice_cfdi_33.custom_invoice_pdf').sudo()._render_qweb_pdf(self.ids)[0]
+                    if 'XAXX010101000' in old_partner_values.get('vat',''):
+                        move.partner_id.sudo().write(old_partner_values)
+                try:
+                    vals = {
+                        'partner_id':move.partner_id.id,
+                        'invoice_id': move.id,
+                    }
+                    wizard_id = move.env['partner.invoice.wizard'].sudo().new(vals)
+                    wizard_id.onchange_partner_id()
+                    values = {
+                        'partner_id': wizard_id.partner_id.id or False,
+                        'invoice_id': wizard_id.invoice_id.id or False,
+                        'vat': wizard_id.vat,
+                        'street': wizard_id.street,
+                        'street2': wizard_id.street2,
+                        'l10n_mx_street3': wizard_id.l10n_mx_street3,
+                        'l10n_mx_street4': wizard_id.l10n_mx_street4,
+                        'l10n_mx_city2': wizard_id.l10n_mx_city2,
+                        'zip': wizard_id.zip,
+                        'city': wizard_id.city,
+                        'state_id': wizard_id.state_id.id or False,
+                        'country_id': wizard_id.country_id.id or False,
+                        'email': wizard_id.email,
+                        'pay_forma_id': wizard_id.pay_forma_id.id or False,
+                        'pay_method_id': wizard_id.pay_method_id.id or False,
+                        'sign': wizard_id.sign,
+                        'uso_cfdi_id': wizard_id.uso_cfdi_id.id or False,
+                        'ppd_method_payment': wizard_id.ppd_method_payment,
+                        'reg_fis_id': wizard_id.reg_fis_id.id or False,
+                        'show_reg_fis': wizard_id.show_reg_fis,
+                    }
+
+                    wizard_id.create(values)
+                    wizard_id.sudo().create_cfdi()
+                    # Si es rfc generico entonces regresamos los valores despues de timbrar 
+                    restore_def_vals()
+                except Exception as error:
+                    restore_def_vals()
+                    raise UserError(error)
                 # vals.update(web_values)
-
+               
                 return self
     
     
