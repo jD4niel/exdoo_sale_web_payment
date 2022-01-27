@@ -19,6 +19,21 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_right_pane">
+                                <label for="token_life_days"/> <br/>
+                                <field name="token_life_days"/>
+                                <div class="text-muted">
+                                    Este campo define los días en los que el token estará activo.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_right_pane">
+                                <label for="overdue_message"/> <br/>
+                                <field name="overdue_message"/>
+                            </div>
+                        </div>
                     </div>
                 </xpath>
             </field>

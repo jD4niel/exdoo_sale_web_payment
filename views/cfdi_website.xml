@@ -6,7 +6,14 @@
                 <div class="container">
                     <div id="wrap">
                         <div class="container">
-                            <div class="col-md-12" style="margin-top:100px;">
+
+                            <div t-if="token_overdue" class="col-md-12" style="margin-top:100px;">
+                                <div class="alert alert-warning">
+                                    <t t-esc="token_overdue"/> <br/>
+                                </div>
+                            </div>
+
+                            <div t-if="not token_overdue" class="col-md-12" style="margin-top:100px;">
                                 
                                 <div t-if="partner_error" class="alert alert-danger">
                                     <span t-esc="partner_error"/>

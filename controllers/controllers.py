@@ -2,6 +2,8 @@
 import werkzeug
 from odoo import http, _, exceptions
 from odoo.http import request
+from datetime import datetime
+import pytz
 
 
 class SaleAutoInvoice(http.Controller):
@@ -25,6 +27,15 @@ class SaleAutoInvoice(http.Controller):
             move_list.append(val)
 
         return move_list
+
+    def check_token_life(self,sale,company):
+        tz_name = pytz.timezone('Mexico/General')
+        date_order = sale.date_order.astimezone(tz_name)
+        now = datetime.now().astimezone(tz_name)
+        difference_days = (now - date_order).days  
+        return int(company.token_life_days) < int(difference_days)
+            
+        
     
     @http.route('/web_sale/cfdi/submit', type='http', auth='public', website=True, sitemap=False)
     def cfdi_submit(self,  **post):
@@ -155,6 +166,15 @@ class SaleAutoInvoice(http.Controller):
 
         sale = env['sale.order'].sudo().browse(int(order_id))
         partner_id = env['res.partner'].sudo()
+
+        company = sale.company_id
+        if company_id and not sale.company_id:
+            company = env['res.company'].browse(int(company_id))
+
+        if self.check_token_life(sale,company):
+            return request.render('exdoo_sale_auto_invoice.cfdi_from_sale', {'token_overdue' : company.overdue_message}) 
+        
+
         moves = env['account.move'].sudo()
         values = dict()
         if sale and access_token:
@@ -246,6 +266,14 @@ class SaleAutoInvoice(http.Controller):
 
     @http.route('/web_sale/partner', auth='public', website=True)
     def partner_new(self, order_id=None, access_token=None, company_id=None,**post):
+        sale = request.env['sale.order'].sudo().browse(int(order_id))
+        company = sale.company_id
+        if company_id and not sale.company_id:
+            company = request.env['res.company'].browse(int(company_id))
+            
+        if self.check_token_life(sale,company):
+            return request.render('exdoo_sale_auto_invoice.cfdi_from_sale', {'token_overdue' : company.overdue_message}) 
+        
         values = {'token_url': f'order_id={order_id}&access_token={access_token}&company_id={company_id}'}
         try:
             values.update(self.get_cfdi_values())
