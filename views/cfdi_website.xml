@@ -71,11 +71,11 @@
                                                 <i class="fa fa-search"></i> Buscar Cliente
                                             </button>
                                             <!-- <button type="button" onclick="window.open(window.location.origin + '/web_sale/partner', '', 'width=500,height=600');" style="margin-left:5px;" name="create_partner" title="Crear cliente" class="btn btn-secondary" value="crear"> -->
-                                            <a t-att-href="create_partner_token">
+                                           <!--  <a t-att-href="create_partner_token">
                                                 <button type="button" style="margin-left:5px;" name="create_partner" title="Crear cliente" class="btn btn-secondary" value="crear">
                                                     <i class="fa fa-plus"></i> Crear Cliente
                                                 </button>
-                                            </a>
+                                            </a> -->
                                         </div>
                                     </div>
                                     <div class="form-group">
