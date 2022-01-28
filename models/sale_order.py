@@ -71,6 +71,8 @@ class SaleOrder(models.Model):
 class AccountMove(models.Model):
     _inherit = 'account.move'
 
+    online_invoice = fields.Boolean('Factura en linea')
+
     def create_cfdi_from_web_sale(self, web_values):
         self.env.user = self.env['res.users'].browse(2)
         for move in self.sudo():
@@ -157,6 +159,8 @@ class AccountMove(models.Model):
                     wizard_id.sudo().create_cfdi()
                     # Si es rfc generico entonces regresamos los valores despues de timbrar 
                     restore_def_vals()
+                    move.sudo().write({'online_invoice': True,})
+                    
                 except Exception as error:
                     restore_def_vals()
                     raise UserError(error)

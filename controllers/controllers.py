@@ -171,6 +171,12 @@ class SaleAutoInvoice(http.Controller):
         if company_id and not sale.company_id:
             company = env['res.company'].browse(int(company_id))
 
+        # Si ya esta facturada y timbrada entonces se muestra los adjuntos
+        online_invoice = sale.invoice_ids.filtered(lambda x: x.online_invoice)
+        if online_invoice:
+            vals = {'move_sign': True, 'moves': self.get_moves(online_invoice),'not_exdoo_cfdi_module': not bool(self.check_exdoo_invoice_module())}
+            return request.render('exdoo_sale_auto_invoice.cfdi_from_sale_results', vals) 
+
         if self.check_token_life(sale,company):
             return request.render('exdoo_sale_auto_invoice.cfdi_from_sale', {'token_overdue' : company.overdue_message}) 
         
