@@ -131,6 +131,17 @@
                                                 </t>
                                             </select>
                                         </div>
+                                        <div class="form-group">
+                                            <label for="reg_fis_id">Régimen Fiscal</label>
+                                            <select required="1" class="form-control" name="reg_fis_id" id="reg_fis_id">
+                                                <option value="0"> seleccionar </option>
+                                                <t t-foreach="reg_fis_id" t-as="value" >
+                                                    <option t-att-value="value.id" t-att-selected="1 if default_reg_fis_id.id == value.id else 0">
+                                                        <t t-esc="value.display_name"/>
+                                                    </option>
+                                                </t>
+                                            </select>
+                                        </div>
                                         
                                     </t>
                                     <div class="form-group">

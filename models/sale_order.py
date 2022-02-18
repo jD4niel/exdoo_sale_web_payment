@@ -111,6 +111,7 @@ class AccountMove(models.Model):
                     'uso_cfdi_id': web_values.get('uso_cfdi_id'),
                     'met_pago_id': web_values.get('met_pago_id'),
                     'forma_pago_id': web_values.get('forma_pago_id'),
+                    'reg_fis_id': web_values.get('reg_fis_id'),
                 }
                 # Si el RFC es generico
                 old_partner_values = {
@@ -121,6 +122,7 @@ class AccountMove(models.Model):
                     'uso_cfdi_id' : move.partner_id.uso_cfdi_id,
                     'forma_pago_id' : move.partner_id.forma_pago_id,
                     'met_pago_id' : move.partner_id.met_pago_id,
+                    'reg_fis_id': move.partner_id.reg_fis_id,
                 }
                 # move.sudo().write(cfdi_vals)
                 # Actualizamos los datos en el cliente
@@ -159,7 +161,6 @@ class AccountMove(models.Model):
                         'sign': wizard_id.sign,
                         'uso_cfdi_id': wizard_id.uso_cfdi_id.id or False,
                         'ppd_method_payment': wizard_id.ppd_method_payment,
-                        'reg_fis_id': wizard_id.reg_fis_id.id or False,
                         'show_reg_fis': wizard_id.show_reg_fis,
                     }
 

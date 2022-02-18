@@ -112,12 +112,15 @@ class SaleAutoInvoice(http.Controller):
                     partner_cfdi_id = partner_id.uso_cfdi_id.id if partner_id.uso_cfdi_id else False
                     partner_forma_pago_id = partner_id.forma_pago_id.id if partner_id.forma_pago_id else False
                     partner_met_pago_id = partner_id.met_pago_id.id if partner_id.met_pago_id else False
+                    partner_reg_fis_id = partner_id.reg_fis_id.id if partner_id.reg_fis_id else False
 
                     uso_cfdi_id = int(post.get('uso_cfdi_id', False)) if post.get('uso_cfdi_id', False) else partner_cfdi_id
                     forma_pago_id = int(post.get('forma_pago_id', False)) if post.get('forma_pago_id', False) else partner_forma_pago_id
                     met_pago_id = int(post.get('met_pago_id', False)) if post.get('met_pago_id', False) else partner_met_pago_id
+                    reg_fis_id = int(post.get('reg_fis_id', False)) if post.get('reg_fis_id', False) else partner_reg_fis_id
 
                     cfdi_values = {
+                        'reg_fis_id': reg_fis_id,
                         'partner_id': partner_id.id,
                         'uso_cfdi_id': uso_cfdi_id,
                         'forma_pago_id': forma_pago_id,
@@ -236,11 +239,13 @@ class SaleAutoInvoice(http.Controller):
         uso_cfdi = request.env['res.uso.cfdi'].sudo().search([])
         forma_pago_id = request.env['res.forma.pago'].sudo().search([])
         pay_method_id = request.env['res.met.pago'].sudo().search([])
+        reg_fis_id = request.env['res.reg.fiscal'].sudo().search([])
 
         return {
             'uso_cfdi_id': uso_cfdi,
             'forma_pago_id': forma_pago_id,
             'met_pago_id': pay_method_id,
+            'reg_fis_id': reg_fis_id,
         }
 
     def get_cfdi_defaults(self,partner_id=False):
@@ -248,11 +253,13 @@ class SaleAutoInvoice(http.Controller):
         uso_cfdi = request.env['res.uso.cfdi'].sudo().search([('name','=','G03')],limit=1)
         forma_pago_id = request.env['res.forma.pago'].sudo().search([('name','=','01')],limit=1)
         pay_method_id = request.env['res.met.pago'].sudo().search([('display_name','=','PUE')],limit=1)
+        reg_fis_id = request.env['res.reg.fiscal'].sudo().search([])
 
         defaults = {
             'default_uso_cfdi_id': uso_cfdi,
             'default_forma_pago_id': forma_pago_id,
             'default_met_pago_id': pay_method_id,
+            'default_reg_fis_id': reg_fis_id,
         }
         if partner_id:
             if partner_id.uso_cfdi_id:
@@ -261,6 +268,8 @@ class SaleAutoInvoice(http.Controller):
                 defaults.update({'default_forma_pago_id': partner_id.forma_pago_id})
             if partner_id.met_pago_id:
                 defaults.update({'default_met_pago_id': partner_id.met_pago_id})
+            if partner_id.reg_fis_id:
+                defaults.update({'default_reg_fis_id': partner_id.reg_fis_id})
 
         return defaults
 
