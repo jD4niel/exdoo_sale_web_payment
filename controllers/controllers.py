@@ -253,7 +253,7 @@ class SaleAutoInvoice(http.Controller):
         uso_cfdi = request.env['res.uso.cfdi'].sudo().search([('name','=','G03')],limit=1)
         forma_pago_id = request.env['res.forma.pago'].sudo().search([('name','=','01')],limit=1)
         pay_method_id = request.env['res.met.pago'].sudo().search([('display_name','=','PUE')],limit=1)
-        reg_fis_id = request.env['res.reg.fiscal'].sudo().search([])
+        reg_fis_id = request.env['res.reg.fiscal'].sudo().search([],limit=1)
 
         defaults = {
             'default_uso_cfdi_id': uso_cfdi,
