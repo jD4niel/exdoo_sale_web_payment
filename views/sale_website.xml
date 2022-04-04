@@ -1,0 +1,128 @@
+<odoo>
+  <template id="index">
+      <t t-call="website.layout">
+          <t t-set="title">Pagar Orden</t>
+          <div class="oe_structure">
+                <div class="container">
+                    <div id="wrap">
+                        <div class="container">
+
+                            <div t-if="token_overdue" class="col-md-12" style="margin-top:100px;">
+                                <div class="alert alert-warning">
+                                    <t t-esc="token_overdue"/> <br/>
+                                </div>
+                            </div>
+
+                            <div t-if="not token_overdue" class="col-md-12" style="margin-top:100px;">
+                                
+                                <div t-if="partner_error" class="alert alert-danger">
+                                    <span t-esc="partner_error"/>
+                                </div>
+
+                                <div t-if="partner_success" class="alert alert-success">
+                                    <span t-esc="partner_success"/>
+                                </div>
+
+                                <t t-if="some_error">    
+                                    <div class="alert alert-danger">
+                                        Ooops, hubo un problema, contacte al adminsitrador!
+                                    </div>
+                                </t>
+                                <t t-if="error">    
+                                    <div class="alert alert-danger">
+                                    <t t-esc="error"/> <br/>
+                                    </div>
+                                </t>
+                                <t t-if="info">    
+                                    <div class="alert alert-info">
+                                    <t t-esc="info"/> <br/>
+                                    </div>
+                                </t>
+                                <t t-if="warning_msg">    
+                                    <div class="alert alert-warning">
+                                    <t t-esc="warning_msg"/> <br/>
+                                    </div>
+                                </t>
+                                ----> <t t-esc="items"/>
+                                ----> <t t-esc="back_urls"/>
+                                <input type="hidden" name="mercadopago_id" id="mercadopago_id" t-att-value="preference['id']"/>
+                                <input type="hidden" name="ky" id="ky" t-att-value="ky"/>
+
+                                <div>
+                                    <h1 style="color: ##7d4a85;"><t t-esc="order_id.display_name"/></h1>
+                                    <div class="form-group">
+                                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                        <input type="hidden" class="form-control" t-att-value="order_id.id or False" name="order_id" id="order_id" required="true" />
+                                        <input type="hidden" class="form-control" t-att-value="partner_id.id or False" name="partner_id" id="partner_id"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="name">Cliente:</label>
+                                        <input type="text" class="form-control" name="name" t-att-value="partner_id.display_name if partner_id else ''" id="name" readonly="1"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="name">Fecha de confirmación:</label>
+                                        <input type="text" class="form-control" name="confirmation_date" t-att-value="order_id.confirmation_date" id="confirmation_date" readonly="1"/>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Producto</th>
+                                                    <th>Cantidad</th>
+                                                    <th>Precio Unitario</th>
+                                                    <th>Impuestos</th>
+                                                    <th>Subtotal</th>
+                                                </tr>
+                                            </thead>
+
+                                            <tbody>
+                                                <tr t-foreach="order_id.order_line" t-as="line">
+                                                    <td><t t-esc="line.name"/></td>
+                                                    <td><t t-esc="line.product_uom_qty"/></td>
+                                                    <td><t t-esc="line.price_unit"/></td>
+                                                    <td>
+                                                        <t t-foreach="line.tax_id" t-as="tax">
+                                                            <t t-esc="tax.display_name"/> <br/>
+                                                        </t>
+                                                    </td>
+                                                    <td><t t-esc="line.price_subtotal"/></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                        
+                                    </div>
+
+                                    <div class="row col-md-12">
+                                        <div class="col-md-8"></div>
+                                        <table class="table col-md-4">
+                                            <tr>
+                                                <td><b>Base disponible:</b></td>
+                                                <td> <t t-esc="order_id.currency_id.symbol"/> <t t-esc="order_id.amount_untaxed"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Impuestos:</b></td>
+                                                <td><t t-esc="order_id.currency_id.symbol"/> <t t-esc="order_id.amount_tax"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="font-size:16px;"><b>Total:</b></td>
+                                                <td style="font-size:16px;"><t t-esc="order_id.currency_id.symbol"/> <t t-esc="order_id.amount_total"/></td>
+                                            </tr>
+                                        </table>
+                                    </div>
+
+
+                                    <div class="exdoo-mercadopago" style="padding:10px;">  </div>
+
+                                </div>
+                            </div>
+
+                            <br/>
+                        </div>
+                    </div>
+                </div>
+          </div>
+      </t>
+  </template>
+
+</odoo>

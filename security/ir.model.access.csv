@@ -1,2 +1,2 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_invoice_link_wizard,access.invoice.link.wizard,model_invoice_link_wizard,exdoo_sale_auto_invoice.invoice_link,1,1,1,1
+access_payment_link_wizard,access.payment.link.wizard,model_payment_link_wizard,exdoo_sale_web_payment.payment_link,1,1,1,1

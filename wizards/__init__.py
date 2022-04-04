@@ -1,4 +1,4 @@
 # -*- coding: utf-8 -*-
 
-from . import invoice_link_wizard
+from . import payment_link_wizard
 

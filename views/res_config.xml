@@ -1,43 +1,35 @@
 <odoo>
     <data>
-        <record model="ir.ui.view" id="auto_invoice_from_sale_config_form_view_inh">
-            <field name="name">auto_invoice_from_sale_config_form_view_inh</field>
+        <record model="ir.ui.view" id="payment_from_sale_config_form_view_inh">
+            <field name="name">payment_from_sale_config_form_view_inh</field>
             <field name="model">res.config.settings</field>
             <field name="inherit_id" ref="sale.res_config_settings_view_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//div[@name='catalog_setting_container']" position="after">
-                    <h2>Auto invoice from website</h2>
+                <xpath expr="//div[@data-key='sale_management']//h2" position="before">
+                    <h2>Ventas con Mercadopago</h2>
                     <div class="row mt16 o_settings_container" id="auto_invoice_field_container">
-                        <div class="col-12 col-lg-6 o_setting_box" title="Auto Invoice">
-                            <div class="o_setting_left_pane">
-                                <field name="generate_invoice_on_confirm" />
-                            </div>
+                        <div class="col-12 col-lg-6 o_setting_box">
                             <div class="o_setting_right_pane">
-                                <label for="generate_invoice_on_confirm"/>
+                                <label for="mercadopago_public_key"/> <br/>
+                                <field name="mercadopago_public_key"/>
                                 <div class="text-muted">
-                                    If this field is not enabled, you can generate a token to invoice current sale from actions menu
+                                    La llave pública se encuentra en el panel de usuario de Mercadopago.
                                 </div>
                             </div>
                         </div>
                         <div class="col-12 col-lg-6 o_setting_box">
                             <div class="o_setting_right_pane">
-                                <label for="token_life_days"/> <br/>
-                                <field name="token_life_days"/>
+                                <label for="mercadopago_access_token"/> <br/>
+                                <field name="mercadopago_access_token"/>
                                 <div class="text-muted">
-                                    Este campo define los días en los que el token estará activo.
+                                    Este token se encuentra en el panel de usuario de Mercadopago.
                                 </div>
-                            </div>
-                        </div>
-                        <div class="col-12 col-lg-6 o_setting_box">
-                            <div class="o_setting_right_pane">
-                                <label for="overdue_message"/> <br/>
-                                <field name="overdue_message"/>
                             </div>
                         </div>
                     </div>
                 </xpath>
             </field>
-        </record>
+        </record> 
         
     </data>
 </odoo>
