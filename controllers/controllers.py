@@ -32,12 +32,6 @@ class SaleWebPayment(http.Controller):
         #sdk = mercadopago.SDK("TEST-7672996189096229-033113-154f63e10177c834d66b62e884aede54-1099000078")
 
         preference_data = {
-            "back_urls": {
-                "success": "https://www.google.com/",
-                "failure": "https://www.youtube.com",
-                "pending": "https://www.facebook.com"
-            },
-            "auto_return": "all",
             "items": [
                 {
                     "title": "Orden: " + sale.display_name,
@@ -47,8 +41,13 @@ class SaleWebPayment(http.Controller):
             ],
         }
 
+
         preference_response = sdk.preference().create(preference_data)
-        preference = preference_response["response"]
+        print("preference_response: ", preference_response)
+        preference = preference_response["response"] 
+       
+        if not preference:
+            preference = dict()
 
         if sale and access_token:
             if not sale:
@@ -61,17 +60,21 @@ class SaleWebPayment(http.Controller):
             if not token_ok:
                 raise werkzeug.exceptions.NotFound
 
-            
-
-        preference.update({
+        values = {
             'token': access_token,
             'order_id': sale,
-            'partner_id': partner_id,
-            'preference': preference,
-            'ky': sale.company_id.mercadopago_public_key,
-        })
+            'partner_id': partner_id,}
 
+        if preference_response.get('status','') == "approved":
+            values.update({
+                'preference': preference,
+                'ky': sale.company_id.mercadopago_public_key,
+            })
 
-        return request.render('exdoo_sale_web_payment.index', preference)
+        else:
+            values.update({'error': f"Error {preference_response.get('status','')} - {preference_response.get('response','')} "})
+
+        print("preference: %s"%preference)
+        return request.render('exdoo_sale_web_payment.index', values)
  
    

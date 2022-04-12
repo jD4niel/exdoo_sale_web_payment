@@ -43,12 +43,12 @@
                                     <t t-esc="warning_msg"/> <br/>
                                     </div>
                                 </t>
-                                ----> <t t-esc="items"/>
-                                ----> <t t-esc="back_urls"/>
-                                <input type="hidden" name="mercadopago_id" id="mercadopago_id" t-att-value="preference['id']"/>
-                                <input type="hidden" name="ky" id="ky" t-att-value="ky"/>
 
                                 <div>
+                                    ----> <t t-esc="items"/>
+                                    ----> <t t-esc="back_urls"/>
+                                    <input t-if="preference" type="hidden" name="mercadopago_id" id="mercadopago_id" t-att-value="preference.get('id',0)"/>
+                                    <input type="hidden" name="ky" id="ky" t-att-value="ky"/>
                                     <h1 style="color: ##7d4a85;"><t t-esc="order_id.display_name"/></h1>
                                     <div class="form-group">
                                         <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
@@ -112,7 +112,7 @@
                                     </div>
 
 
-                                    <div class="exdoo-mercadopago" style="padding:10px;">  </div>
+                                    <div t-if="preference" class="exdoo-mercadopago" style="padding:10px;">  </div>
 
                                 </div>
                             </div>
