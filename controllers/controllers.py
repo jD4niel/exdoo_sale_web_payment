@@ -5,6 +5,7 @@ from odoo.http import request
 from datetime import datetime
 import pytz
 import mercadopago
+import json
 
 
 class SaleWebPayment(http.Controller):      
@@ -27,9 +28,8 @@ class SaleWebPayment(http.Controller):
         mp_access_token = sale.company_id.mercadopago_access_token
         if not mp_access_token:
             raise werkzeug.exceptions.NotFound
-
+        
         sdk = mercadopago.SDK(mp_access_token)
-        #sdk = mercadopago.SDK("TEST-7672996189096229-033113-154f63e10177c834d66b62e884aede54-1099000078")
 
         preference_data = {
             "items": [
@@ -39,12 +39,16 @@ class SaleWebPayment(http.Controller):
                     "unit_price": sale.amount_total,
                 }
             ],
+            "transaction_amount": sale.amount_total,
         }
 
+        try:
+            preference_response = sdk.preference().create(preference_data)
+            print("preference_response: ", preference_response)
+            preference = preference_response["response"] 
+        except Exception as error:
+            raise UserWarning(error)
 
-        preference_response = sdk.preference().create(preference_data)
-        print("preference_response: ", preference_response)
-        preference = preference_response["response"] 
        
         if not preference:
             preference = dict()
@@ -62,19 +66,22 @@ class SaleWebPayment(http.Controller):
 
         values = {
             'token': access_token,
+            'ky': sale.company_id.mercadopago_public_key,
             'order_id': sale,
+            'preference': {},
             'partner_id': partner_id,}
 
-        if preference_response.get('status','') == "approved":
+        if preference_response.get('response',''):
             values.update({
-                'preference': preference,
-                'ky': sale.company_id.mercadopago_public_key,
+                'preference': preference or {},
             })
 
         else:
             values.update({'error': f"Error {preference_response.get('status','')} - {preference_response.get('response','')} "})
 
-        print("preference: %s"%preference)
+        print("-------")
+        print("values: %s"%values)
+        print("-------")
         return request.render('exdoo_sale_web_payment.index', values)
  
    

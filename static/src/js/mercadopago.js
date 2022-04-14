@@ -7,6 +7,7 @@ odoo.define('exdoo_sale_web_payment.mercadopago', function (require) {
     var _t = core._t;
 
     const mp = new MercadoPago($("#ky").val());
+    console.log("MP:", mp)
     console.log("==== MercadoPago init ===")
     // Inicializa el checkout
     mp.checkout({
