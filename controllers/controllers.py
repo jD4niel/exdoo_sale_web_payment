@@ -43,7 +43,9 @@ class SaleWebPayment(http.Controller):
         }
 
         try:
-            preference_response = sdk.preference().create(preference_data)
+            preference_obj = sdk.preference()
+            print("preferece_obj: %s"%preference_obj)
+            preference_response = preference_obj.create(preference_data)
             print("preference_response: ", preference_response)
             preference = preference_response["response"] 
         except Exception as error:
